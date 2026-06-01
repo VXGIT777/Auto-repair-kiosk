@@ -1,0 +1,92 @@
+@page
+@model CustomersModel
+@{
+    ViewData["Title"] = "Customers";
+}
+
+<section class="page-heading">
+    <div>
+        <h1>Customers</h1>
+        <p>Look up service customers and maintain contact details.</p>
+    </div>
+</section>
+
+<section class="two-column">
+    <form method="post" asp-page-handler="Save" class="panel stack">
+        <input type="hidden" asp-for="Input.Id" />
+        <h2>@(Model.Input.Id is null ? "Add Customer" : "Edit Customer")</h2>
+        <div asp-validation-summary="ModelOnly" class="validation"></div>
+
+        <div class="grid-2">
+            <div>
+                <label asp-for="Input.FirstName"></label>
+                <input asp-for="Input.FirstName" />
+                <span asp-validation-for="Input.FirstName" class="validation"></span>
+            </div>
+            <div>
+                <label asp-for="Input.LastName"></label>
+                <input asp-for="Input.LastName" />
+                <span asp-validation-for="Input.LastName" class="validation"></span>
+            </div>
+            <div>
+                <label asp-for="Input.Phone"></label>
+                <input asp-for="Input.Phone" />
+            </div>
+            <div>
+                <label asp-for="Input.Email"></label>
+                <input asp-for="Input.Email" />
+                <span asp-validation-for="Input.Email" class="validation"></span>
+            </div>
+        </div>
+        <label asp-for="Input.Notes"></label>
+        <textarea asp-for="Input.Notes" rows="3"></textarea>
+
+        <div class="actions">
+            <button type="submit">Save customer</button>
+            @if (Model.Input.Id is not null)
+            {
+                <a class="button secondary" asp-page="/Customers">Cancel edit</a>
+            }
+        </div>
+    </form>
+
+    <section class="panel">
+        <h2>Customer List</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Contact</th>
+                    <th>Vehicles</th>
+                    <th class="right">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var customer in Model.Customers)
+            {
+                <tr>
+                    <td>
+                        <strong>@customer.FullName</strong>
+                        @if (!string.IsNullOrWhiteSpace(customer.Notes))
+                        {
+                            <small>@customer.Notes</small>
+                        }
+                    </td>
+                    <td>
+                        <span>@customer.Phone</span>
+                        <small>@customer.Email</small>
+                    </td>
+                    <td>@customer.Vehicles.Count</td>
+                    <td class="right row-actions">
+                        <a asp-page="/Vehicles" asp-route-customerId="@customer.Id">Vehicles</a>
+                        <a asp-page="/Customers" asp-route-editId="@customer.Id">Edit</a>
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@customer.Id">
+                            <button type="submit" class="danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </section>
+</section>

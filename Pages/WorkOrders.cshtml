@@ -1,0 +1,114 @@
+@page
+@model WorkOrdersModel
+@{
+    ViewData["Title"] = "Work Orders";
+}
+
+<section class="page-heading">
+    <div>
+        <h1>Work Orders</h1>
+        <p>Create repair orders, update status, and maintain service or parts line items.</p>
+    </div>
+</section>
+
+<section class="two-column">
+    <form method="post" asp-page-handler="Save" class="panel stack">
+        <input type="hidden" asp-for="Input.Id" />
+        <h2>@(Model.Input.Id is null ? "Create Work Order" : "Update Work Order")</h2>
+        <div asp-validation-summary="ModelOnly" class="validation"></div>
+
+        <label asp-for="Input.VehicleId"></label>
+        <select asp-for="Input.VehicleId" asp-items="Model.VehicleOptions"></select>
+        <span asp-validation-for="Input.VehicleId" class="validation"></span>
+
+        <label asp-for="Input.Complaint"></label>
+        <input asp-for="Input.Complaint" />
+        <span asp-validation-for="Input.Complaint" class="validation"></span>
+
+        <div class="grid-3">
+            <div>
+                <label asp-for="Input.Status"></label>
+                <select asp-for="Input.Status" asp-items="Model.StatusOptions"></select>
+            </div>
+            <div>
+                <label asp-for="Input.OpenedOn"></label>
+                <input asp-for="Input.OpenedOn" type="date" />
+            </div>
+            <div>
+                <label asp-for="Input.PromisedOn"></label>
+                <input asp-for="Input.PromisedOn" type="date" />
+            </div>
+        </div>
+
+        <label asp-for="Input.TechnicianNotes"></label>
+        <textarea asp-for="Input.TechnicianNotes" rows="3"></textarea>
+
+        <h3>Line Items</h3>
+        <div class="line-items">
+            @for (var i = 0; i < Model.Input.LineItems.Count; i++)
+            {
+                <div class="line-item-row">
+                    <input type="hidden" asp-for="Input.LineItems[i].Id" />
+                    <div>
+                        <label asp-for="Input.LineItems[i].Description"></label>
+                        <input asp-for="Input.LineItems[i].Description" />
+                    </div>
+                    <div>
+                        <label asp-for="Input.LineItems[i].Quantity"></label>
+                        <input asp-for="Input.LineItems[i].Quantity" />
+                    </div>
+                    <div>
+                        <label asp-for="Input.LineItems[i].UnitPrice"></label>
+                        <input asp-for="Input.LineItems[i].UnitPrice" />
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="actions">
+            <button type="submit">Save work order</button>
+            @if (Model.Input.Id is not null)
+            {
+                <a class="button secondary" asp-page="/WorkOrders">Cancel edit</a>
+            }
+        </div>
+    </form>
+
+    <section class="panel">
+        <h2>Order List</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Order</th>
+                    <th>Vehicle</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                    <th class="right">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var order in Model.WorkOrders)
+            {
+                <tr>
+                    <td>
+                        <strong>#@order.Id @order.Complaint</strong>
+                        <small>Opened @order.OpenedOn.ToString("MMM d, yyyy")</small>
+                    </td>
+                    <td>
+                        <span>@order.Vehicle?.Label</span>
+                        <small>@order.Vehicle?.Customer?.FullName</small>
+                    </td>
+                    <td><span class="status">@order.Status</span></td>
+                    <td>@order.Total.ToString("C")</td>
+                    <td class="right row-actions">
+                        <a asp-page="/WorkOrders" asp-route-editId="@order.Id">Edit</a>
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@order.Id">
+                            <button type="submit" class="danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </section>
+</section>

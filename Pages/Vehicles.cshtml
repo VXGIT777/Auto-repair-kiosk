@@ -1,0 +1,103 @@
+@page
+@model VehiclesModel
+@{
+    ViewData["Title"] = "Vehicles";
+}
+
+<section class="page-heading">
+    <div>
+        <h1>Vehicles</h1>
+        <p>Associate vehicles with customers and open work orders from the vehicle list.</p>
+    </div>
+</section>
+
+<section class="two-column">
+    <form method="post" asp-page-handler="Save" class="panel stack">
+        <input type="hidden" asp-for="Input.Id" />
+        <h2>@(Model.Input.Id is null ? "Add Vehicle" : "Edit Vehicle")</h2>
+        <div asp-validation-summary="ModelOnly" class="validation"></div>
+
+        <label asp-for="Input.CustomerId"></label>
+        <select asp-for="Input.CustomerId" asp-items="Model.CustomerOptions"></select>
+        <span asp-validation-for="Input.CustomerId" class="validation"></span>
+
+        <div class="grid-3">
+            <div>
+                <label asp-for="Input.Year"></label>
+                <input asp-for="Input.Year" />
+                <span asp-validation-for="Input.Year" class="validation"></span>
+            </div>
+            <div>
+                <label asp-for="Input.Make"></label>
+                <input asp-for="Input.Make" />
+                <span asp-validation-for="Input.Make" class="validation"></span>
+            </div>
+            <div>
+                <label asp-for="Input.Model"></label>
+                <input asp-for="Input.Model" />
+                <span asp-validation-for="Input.Model" class="validation"></span>
+            </div>
+        </div>
+
+        <div class="grid-3">
+            <div>
+                <label asp-for="Input.Color"></label>
+                <input asp-for="Input.Color" />
+            </div>
+            <div>
+                <label asp-for="Input.LicensePlate"></label>
+                <input asp-for="Input.LicensePlate" />
+            </div>
+            <div>
+                <label asp-for="Input.Vin"></label>
+                <input asp-for="Input.Vin" />
+                <span asp-validation-for="Input.Vin" class="validation"></span>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button type="submit">Save vehicle</button>
+            @if (Model.Input.Id is not null)
+            {
+                <a class="button secondary" asp-page="/Vehicles">Cancel edit</a>
+            }
+        </div>
+    </form>
+
+    <section class="panel">
+        <h2>Vehicle List</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Vehicle</th>
+                    <th>Customer</th>
+                    <th>Identifier</th>
+                    <th class="right">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var vehicle in Model.Vehicles)
+            {
+                <tr>
+                    <td>
+                        <strong>@vehicle.Label</strong>
+                        <small>@vehicle.Color</small>
+                    </td>
+                    <td>@vehicle.Customer?.FullName</td>
+                    <td>
+                        <span>@vehicle.LicensePlate</span>
+                        <small>@vehicle.Vin</small>
+                    </td>
+                    <td class="right row-actions">
+                        <a asp-page="/WorkOrders" asp-route-vehicleId="@vehicle.Id">Orders</a>
+                        <a asp-page="/Vehicles" asp-route-editId="@vehicle.Id">Edit</a>
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@vehicle.Id">
+                            <button type="submit" class="danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </section>
+</section>

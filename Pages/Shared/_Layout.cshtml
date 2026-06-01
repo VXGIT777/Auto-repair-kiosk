@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - Auto Repair Kiosk</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="app-header">
+        <a class="brand" asp-page="/Customers">Auto Repair Kiosk</a>
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <nav aria-label="Primary navigation">
+                <a asp-page="/Customers">Customers</a>
+                <a asp-page="/Vehicles">Vehicles</a>
+                <a asp-page="/WorkOrders">Work Orders</a>
+            </nav>
+            <form method="post" asp-page="/Logout">
+                <span>@User.Identity.Name</span>
+                <button type="submit" class="link-button">Sign out</button>
+            </form>
+        }
+    </header>
+
+    <main class="shell">
+        @RenderBody()
+    </main>
+</body>
+</html>

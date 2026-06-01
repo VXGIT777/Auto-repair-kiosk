@@ -1,0 +1,11 @@
+@page
+@model ErrorModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<section class="panel">
+    <h1>Something went wrong</h1>
+    <p>Please return to the kiosk dashboard and try the action again.</p>
+    <a class="button" asp-page="/Customers">Back to customers</a>
+</section>
